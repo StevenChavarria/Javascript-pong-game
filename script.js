@@ -1,6 +1,8 @@
 let canvas;
 let context;
 let gameLoop;
+const points = document.querySelector('.points');
+const gameOver = document.querySelector('.gameOver');
 
 
 const boardX = 300;
@@ -12,8 +14,10 @@ const paddleW = 150;
 let paddleX = 150;
 let ballX = 150;
 let ballY = 150;
-let ballDX = 2;
-let ballDY = 4;
+let ballDX = randomBall();
+let ballDY = randomBall();
+let cont = 0;
+
 
 function drawGameCanvas() {
     canvas = document.getElementById('gameBoard');
@@ -25,6 +29,24 @@ function drawGameCanvas() {
     }
 }
 
+function randomBall() {
+    let myarray = [-4, -3, -2, 2, 3, 4];
+    return myarray[Math.floor(Math.random() * myarray.length)];
+}
+
+function resetGame() {
+    paddleX = 150;
+    ballX = 150;
+    ballY = 150;
+    ballDX = randomBall();
+    ballDY = randomBall();
+    cont = 0;
+    gameOver.textContent = '';
+    document.getElementById("resetButton").style.display = 'none';
+    points.textContent = '';
+
+    drawGameCanvas();
+}
 
 function draw() {
     context.clearRect(0, 0, boardX, boardY);
@@ -59,12 +81,17 @@ function draw() {
     } else if (ballY + ballDY > boardY - 15) {
         if (ballX > paddleX && ballX < paddleX + paddleW) {
             ballDY = -ballDY;
+            cont += 1;
+            points.textContent = 'Points: ' + cont;
         } else {
             clearInterval(gameLoop);
-            alert('Game Over');
+            gameOver.textContent = 'Game Over!';
+            document.getElementById("resetButton").style.display = 'inline';
+            document.getElementById("resetButton").addEventListener('click', resetGame);
         }
     }
 }
+
 
 function ketInput(e) {
     switch (e.keyCode) {
